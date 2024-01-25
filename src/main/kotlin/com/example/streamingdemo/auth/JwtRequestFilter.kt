@@ -9,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
-import org.springframework.security.web.context.RequestAttributeSecurityContextRepository
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import java.util.Date
@@ -21,10 +20,12 @@ class JwtRequestFilter(
 ) : OncePerRequestFilter() {
 
   /*
-   * **IMPORTANT**
-   * This makes sure that the context is available after the async dispatch
+   * **IMPORTANT:**
+   * Default this is `true,
+   * and it will result Server Sent Events to result in Access Denied when finished.
    */
-  private val repo = RequestAttributeSecurityContextRepository()
+  override fun shouldNotFilterAsyncDispatch(): Boolean =
+    false
 
   override fun doFilterInternal(
     request: HttpServletRequest,
@@ -44,7 +45,7 @@ class JwtRequestFilter(
           encoder.encode("admin"),
           listOf(SimpleGrantedAuthority("ADMIN"))
         )
-        val context = SecurityContextHolder.createEmptyContext().apply {
+        val context = SecurityContextHolder.getContext().apply {
           authentication = UsernamePasswordAuthenticationToken(
             admin,
             null,
@@ -53,12 +54,7 @@ class JwtRequestFilter(
             details = WebAuthenticationDetailsSource().buildDetails(request)
           }
         }
-        // Everything above this point is your regular auth code
-
         SecurityContextHolder.setContext(context)
-        // **IMPORTANT**
-        // This makes sure that the context is available after the async dispatch
-        repo.saveContext(context, request, response)
       }
     }
     chain.doFilter(request, response)

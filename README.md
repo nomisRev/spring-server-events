@@ -26,7 +26,7 @@ And then we need replace `{token}` with the result of the previous `curl` comman
 
 ```console
 curl --location --no-buffer --request GET 'localhost:8080/events' \
---header 'Authorization: Bearer {token}'
+--header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwNjE5Nzg3NCwiZXhwIjoxNzA2MjE1ODc0fQ.X8hRoQbGyVi6KnM400-8sYIzNRHulc3fUgYTyXs1Q-CUsZEznq0M3beWBezA0aAdHFQqjwDYEdYDpRS3umwYzA'
 ```
 
 You can also try `event2`, and `events3` to respectively test `SseEmitter` and `Flow`.
@@ -43,13 +43,9 @@ Configuring Spring is done using `@EnableWebSecurity`, `SecurityFilterChain`,
 `PasswordEncoder`, `AuthenticationProvider` & `AuthenticationManager`. Nothing special needs to be configured here.
 
 **Important:** for Spring to be able to complete request processing after the server sent all its events we need to
-use `RequestAttributeSecurityContextRepository`! If this is not done it'll result in `AccessDeniedException`!
-We need to save the `SecurityHolderContext` into the `RequestAttributeSecurityContextRepository`
-using `saveContext(context, request, response)`.
-This necessary since Spring
-6, [Require Explicit Saving of SecurityContextRepository](https://docs.spring.io/spring-security/reference/5.8/migration/servlet/session-management.html#_require_explicit_saving_of_securitycontextrepository).
+set `shouldNotFilterAsyncDispatch` to `true` in `OncePerRequestFilter`.
 
-See [JWTRequestFilter](https://github.com/nomisRev/spring-server-events/blob/dd671b3dd8a750707451d171d9fd0c10ded1aaaf/src/main/kotlin/com/example/streamingdemo/auth/JWTRequestFilter.kt#L61),
+See [JWTRequestFilter](https://github.com/nomisRev/spring-server-events/blob/dd671b3dd8a750707451d171d9fd0c10ded1aaaf/src/main/kotlin/com/example/streamingdemo/auth/JWTRequestFilter.kt#L27)
 for practical details.
 
 ### SecurityHolderContext & MDC
