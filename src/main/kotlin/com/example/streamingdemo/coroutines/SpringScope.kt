@@ -17,8 +17,11 @@ import kotlin.coroutines.cancellation.CancellationException
 @Component
 class SpringScope(coroutineDispatcher: CoroutineDispatcher) : CoroutineScope, DisposableBean {
   private val logger: Logger = LoggerFactory.getLogger(SpringScope::class.java)
+  // SupervisorJob prevents child errors to not fail and cancel SpringScope.
+  // Errors **have to be** managed within the child coroutines
   private val job = SupervisorJob()
 
+  // Add a default exception handler that logs uncaught errors into the log system
   override val coroutineContext: CoroutineContext =
     coroutineDispatcher + job + CoroutineExceptionHandler { context, throwable ->
       if (throwable !is CancellationException) {
