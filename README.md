@@ -26,7 +26,7 @@ And then we need replace `{token}` with the result of the previous `curl` comman
 
 ```console
 curl --location --no-buffer --request GET 'localhost:8080/events' \
---header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwNjE5Nzg3NCwiZXhwIjoxNzA2MjE1ODc0fQ.X8hRoQbGyVi6KnM400-8sYIzNRHulc3fUgYTyXs1Q-CUsZEznq0M3beWBezA0aAdHFQqjwDYEdYDpRS3umwYzA'
+--header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwNjE5OTQ4MywiZXhwIjoxNzA2MjE3NDgzfQ.xt6v-N38fkDvuIAsA-FF785BygNw2ifXn8ZGSlYjTdbw7Pu2gjpkIPBginb0O_6R6_jtAdVUsPaJfHYeUSDiag'
 ```
 
 You can also try `event2`, and `events3` to respectively test `SseEmitter` and `Flow`.
